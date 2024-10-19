@@ -6,27 +6,33 @@ const TimerStates = {
   RUNNING: 'running'
 };
 
-// Function to get URL parameters
-function getUrlParams() {
+// Dictionary to declare URL parameters and their default values
+const urlParamsDefaults = {
+  countdown: 5 // Countdown time in seconds
+};
+
+// Function to get URL parameters with defaults
+function getUrlParamsWithDefaults(defaults) {
   const params = {};
-  window.location.search.substring(1).split('&').forEach(function (item) {
-    const pair = item.split('=');
-    if (pair[0]) {
-      params[pair[0]] = decodeURIComponent(pair[1] || '');
-    }
-  });
+  const urlParams = new URLSearchParams(window.location.search);
+
+  for (const key in defaults) {
+    params[key] = urlParams.has(key) ? parseInt(urlParams.get(key)) : defaults[key];
+  }
+
   return params;
 }
 
-// Get parameters
-const params = getUrlParams();
+// Get parameters with defaults
+const params = getUrlParamsWithDefaults(urlParamsDefaults);
 
 // Set default values if parameters are not provided
-const countdownTime = params.countdown ? parseInt(params.countdown) : 5; // Countdown time in seconds
+const countdownTime = params.countdown;
 
 let timerDisplay = document.getElementById('timer');
 let startButton = document.getElementById('startButton');
 let countdownMessage = document.getElementById('countdownMessage');
+
 let countdownInterval;
 let apneaInterval;
 let currentTimerValue = countdownTime;
