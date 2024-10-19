@@ -11,23 +11,30 @@
       text-align: center;
       background-color: #282c34;
       color: white;
-      margin-top: 50px;
+      margin-top: 5%;
     }
 
     #timer {
-      font-size: 72px;
-      margin: 20px;
+      font-size: 20vw;
+      margin: 10%;
     }
 
     #startButton {
-      font-size: 24px;
-      padding: 10px 20px;
+      font-size: 5vw;
+      padding: 4% 8%;
     }
 
     #countdownMessage {
-      font-size: 24px;
-      margin: 20px;
+      font-size: 6vw;
+      margin: 10%;
       color: yellow;
+    }
+
+    /* Mobile styles */
+    @media (max-width: 600px) {
+      body {
+        margin-top: 10%;
+      }
     }
   </style>
 </head>
@@ -36,8 +43,8 @@
 
   <h1>Apnea Timer</h1>
   <div id="timer">00:00</div>
-  <button id="startButton">Prepare</button>
   <div id="countdownMessage"></div>
+  <button id="startButton">Prepare</button>
 
   <script src="script.js"></script>
 </body>
