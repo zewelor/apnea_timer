@@ -20,7 +20,6 @@ const params = getUrlParams();
 
 // Set default values if parameters are not provided
 const countdownTime = params.countdown ? parseInt(params.countdown) : 1; // Countdown time in seconds
-const beepIntervals = params.beep ? params.beep.split(',').map(Number) : []; // Beep at specified seconds
 
 let timerDisplay = document.getElementById('timer');
 let startButton = document.getElementById('startButton');
@@ -73,6 +72,7 @@ function startCountdown() {
 
 function startApneaTimer() {
   startButton.textContent = "Stop";
+  playBeep({ duration: 1000, frequency: 1000 });
   timerState = TimerStates.RUNNING;
   currentTimerValue = 0; // Start from 0 for stopwatch
   timerDisplay.textContent = formatTime(currentTimerValue);
@@ -82,11 +82,6 @@ function startApneaTimer() {
     timerDisplay.textContent = formatTime(currentTimerValue);
 
     let elapsedTime = currentTimerValue;
-
-    // Emit beeps at specified intervals
-    if (beepIntervals.includes(elapsedTime)) {
-      playBeep(); // Default beep
-    }
 
     if (elapsedTime % 60 === 0) {
       playMultipleBeeps(elapsedTime % 60, { frequency: 700 });
