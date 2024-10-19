@@ -1,5 +1,11 @@
 let audioCtx;
 
+const TimerStates = {
+  STOPPED: 'stopped',
+  COUNTDOWN: 'countdown',
+  RUNNING: 'running'
+};
+
 // Function to get URL parameters
 function getUrlParams() {
   const params = {};
@@ -16,19 +22,15 @@ function getUrlParams() {
 const params = getUrlParams();
 
 // Set default values if parameters are not provided
-const countdownTime = params.countdown ? parseInt(params.countdown) : 1; // Countdown time in seconds
+const countdownTime = params.countdown ? parseInt(params.countdown) : 5; // Countdown time in seconds
 
 let timerDisplay = document.getElementById('timer');
 let startButton = document.getElementById('startButton');
 let countdownMessage = document.getElementById('countdownMessage');
 let countdownInterval;
 let apneaInterval;
-let currentTimerValue;
-const TimerStates = {
-  STOPPED: 'stopped',
-  COUNTDOWN: 'countdown',
-  RUNNING: 'running'
-};
+let currentTimerValue = countdownTime;
+timerDisplay.textContent = formatTime(currentTimerValue);
 
 let timerState = TimerStates.STOPPED;
 
@@ -59,13 +61,12 @@ function startCountdown() {
   countdownInterval = setInterval(() => {
     currentTimerValue--;
     timerDisplay.textContent = formatTime(currentTimerValue);
-    if (currentTimerValue <= 5 && currentTimerValue > 0) {
-      playBeep({ duration: 200, frequency: 1000 });
-    }
     if (currentTimerValue <= 0) {
       clearInterval(countdownInterval);
       countdownMessage.textContent = ""; // Clear countdown message
       startApneaTimer();
+    } else if (currentTimerValue <= 5) {
+      playBeep({ duration: 200, frequency: 1000 });
     }
   }, 1000);
 }
