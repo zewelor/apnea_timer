@@ -26,3 +26,7 @@ To set these parameters, add them to the URL as query parameters. For example:
 ```
 http://yourdomain.com?countdown=5&beep=30,60,90
 ```
+
+## Note
+
+There is a collapsible section on the webpage that provides information about URL parameters to customize the timer. You can find it by clicking the "URL Parameters" button on the webpage.

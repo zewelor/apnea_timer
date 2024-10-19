@@ -29,6 +29,33 @@
       margin: 20px;
       color: yellow;
     }
+
+    /* Collapsible section styles */
+    .collapsible {
+      background-color: #444;
+      color: white;
+      cursor: pointer;
+      padding: 10px;
+      width: 100%;
+      border: none;
+      text-align: left;
+      outline: none;
+      font-size: 24px;
+      margin-top: 20px;
+    }
+
+    .active, .collapsible:hover {
+      background-color: #555;
+    }
+
+    .content {
+      padding: 0 18px;
+      display: none;
+      overflow: hidden;
+      background-color: #f1f1f1;
+      color: black;
+      font-size: 18px;
+    }
   </style>
 </head>
 
@@ -39,7 +66,28 @@
   <button id="startButton">Start</button>
   <div id="countdownMessage"></div>
 
+  <button class="collapsible">URL Parameters</button>
+  <div class="content">
+    <p><strong>countdown</strong>: The countdown time in seconds before the apnea timer starts. Default value is 1 second.</p>
+    <p><strong>beep</strong>: A comma-separated list of seconds at which the timer will emit a beep sound. For example, <code>beep=30,60,90</code> will beep at 30, 60, and 90 seconds.</p>
+  </div>
+
   <script src="script.js"></script>
+  <script>
+    // Collapsible section script
+    var coll = document.getElementsByClassName("collapsible");
+    for (var i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.display === "block") {
+          content.style.display = "none";
+        } else {
+          content.style.display = "block";
+        }
+      });
+    }
+  </script>
 </body>
 
 </html>
