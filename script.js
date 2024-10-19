@@ -8,7 +8,7 @@ const TimerStates = {
 
 // Dictionary to declare URL parameters and their default values
 const urlParamsDefaults = {
-  countdown: 5 // Countdown time in seconds
+  countdown: 10 // Countdown time in seconds
 };
 
 // Function to get URL parameters with defaults
@@ -17,7 +17,18 @@ function getUrlParamsWithDefaults(defaults) {
   const urlParams = new URLSearchParams(window.location.search);
 
   for (const key in defaults) {
-    params[key] = urlParams.has(key) ? parseInt(urlParams.get(key)) : defaults[key];
+    if (urlParams.has(key)) {
+      const value = urlParams.get(key);
+      if (typeof defaults[key] === 'number') {
+        params[key] = parseInt(value);
+      } else if (typeof defaults[key] === 'boolean') {
+        params[key] = value.toLowerCase() === 'true';
+      } else {
+        params[key] = value;
+      }
+    } else {
+      params[key] = defaults[key];
+    }
   }
 
   return params;
