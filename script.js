@@ -1,6 +1,3 @@
-// script.js
-
-// Global AudioContext
 let audioCtx;
 
 // Function to get URL parameters
@@ -62,6 +59,9 @@ function startCountdown() {
   countdownInterval = setInterval(() => {
     currentTimerValue--;
     timerDisplay.textContent = formatTime(currentTimerValue);
+    if (currentTimerValue <= 5 && currentTimerValue > 0) {
+      playBeep({ duration: 200, frequency: 1000 });
+    }
     if (currentTimerValue <= 0) {
       clearInterval(countdownInterval);
       countdownMessage.textContent = ""; // Clear countdown message
