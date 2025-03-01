@@ -1,28 +1,40 @@
-# apnea_timer
+# Freediving Apnea Timer
 
-## Project Description
+A simple yet effective web application for timing breath-holding exercises for freedivers and breathing practice enthusiasts.
 
-The Freediving Apnea Timer is a web application designed to help freedivers train their breath-holding capabilities. The timer includes a countdown feature, an apnea timer, and beep intervals to assist with training sessions.
+## Features
 
-## How to Use
+- Configurable countdown timer
+- Precise apnea (breath-hold) timer
+- Visual progress indicator
+- Audio feedback at key intervals
+- Vibration feedback for mobile devices
+- Session history tracking
+- Prevents screen from sleeping during timing
+- Works on both desktop and mobile devices
 
-1. Open the web application in your browser.
-2. Click the "Start" button to begin the countdown.
-3. The timer will start counting down from the specified countdown time.
-4. Once the countdown reaches zero, the apnea timer will start.
-5. The apnea timer will count up from zero, displaying the elapsed time.
-6. Click the "Stop" button to stop the apnea timer.
-7. Click the "Restart" button to reset the timer and start again.
+## Usage
 
-## URL Parameters
+1. Set your desired countdown time in the settings panel
+2. Click "Start" to begin the countdown
+3. Take your last breath during the countdown
+4. When the countdown reaches zero, the apnea timer starts automatically
+5. The timer will beep and vibrate at every minute mark
+6. Click "Stop" when you need to breathe
+7. Your session will be saved in the history
 
-The following URL parameters can be set to customize the timer:
+## Settings
 
-- `countdown`: The countdown time in seconds before the apnea timer starts. Default value is 1 second.
-- `beep`: A comma-separated list of seconds at which the timer will emit a beep sound. For example, `beep=30,60,90` will beep at 30, 60, and 90 seconds.
+- **Countdown Time**: Duration in seconds before the apnea timer starts
+- **Audio Feedback**: Toggle sound alerts on/off
+- **Vibration**: Toggle vibration feedback on/off (mobile only)
 
-To set these parameters, add them to the URL as query parameters. For example:
+## Development
 
-```
-http://yourdomain.com?countdown=5&beep=30,60,90
-```
+The application is built with vanilla JavaScript, HTML, and CSS. No external libraries or frameworks are needed.
+
+To run the application locally, simply open the `index.html` file in a web browser.
+
+## License
+
+MIT

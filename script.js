@@ -1,4 +1,5 @@
 let audioCtx;
+let wakeLock = null;
 
 const TimerStates = {
   STOPPED: 'stopped',
@@ -6,52 +7,114 @@ const TimerStates = {
   RUNNING: 'running'
 };
 
-// Dictionary to declare URL parameters and their default values
-const urlParamsDefaults = {
-  countdown: 10 // Countdown time in seconds
+// DOM elements
+const timerDisplay = document.getElementById('timer');
+const startButton = document.getElementById('startButton');
+const countdownMessage = document.getElementById('countdownMessage');
+const progressBar = document.getElementById('progress-bar');
+const countdownTimeInput = document.getElementById('countdownTime');
+const audioEnabledCheckbox = document.getElementById('audioEnabled');
+const vibrationEnabledCheckbox = document.getElementById('vibrationEnabled');
+const historyList = document.getElementById('history-list');
+
+// Default settings
+let settings = {
+  countdownTime: 10,
+  audioEnabled: true,
+  vibrationEnabled: true
 };
 
-// Function to get URL parameters with defaults
-function getUrlParamsWithDefaults(defaults) {
-  const params = {};
-  const urlParams = new URLSearchParams(window.location.search);
-
-  for (const key in defaults) {
-    if (urlParams.has(key)) {
-      const value = urlParams.get(key);
-      if (typeof defaults[key] === 'number') {
-        params[key] = parseInt(value);
-      } else if (typeof defaults[key] === 'boolean') {
-        params[key] = value.toLowerCase() === 'true';
-      } else {
-        params[key] = value;
-      }
-    } else {
-      params[key] = defaults[key];
-    }
-  }
-
-  return params;
-}
-
-// Get parameters with defaults
-const params = getUrlParamsWithDefaults(urlParamsDefaults);
-
-// Set default values if parameters are not provided
-const countdownTime = params.countdown;
-
-let timerDisplay = document.getElementById('timer');
-let startButton = document.getElementById('startButton');
-let countdownMessage = document.getElementById('countdownMessage');
-
+// Timer variables
 let countdownInterval;
 let apneaInterval;
-let currentTimerValue = countdownTime;
-timerDisplay.textContent = formatTime(currentTimerValue);
-
+let currentTimerValue = settings.countdownTime;
+let startTime;
 let timerState = TimerStates.STOPPED;
+let sessionHistory = [];
 
+// Load settings and history from local storage
+loadSettings();
+loadHistory();
+updateUI();
+
+// Event listeners
 startButton.addEventListener('click', handleButtonClick);
+countdownTimeInput.addEventListener('change', updateCountdownTime);
+audioEnabledCheckbox.addEventListener('change', updateAudioSetting);
+vibrationEnabledCheckbox.addEventListener('change', updateVibrationSetting);
+
+function updateCountdownTime() {
+  settings.countdownTime = parseInt(countdownTimeInput.value) || 10;
+  currentTimerValue = settings.countdownTime;
+  timerDisplay.textContent = formatTime(currentTimerValue);
+  saveSettings();
+}
+
+function updateAudioSetting() {
+  settings.audioEnabled = audioEnabledCheckbox.checked;
+  saveSettings();
+}
+
+function updateVibrationSetting() {
+  settings.vibrationEnabled = vibrationEnabledCheckbox.checked;
+  saveSettings();
+}
+
+function saveSettings() {
+  localStorage.setItem('apneaTimerSettings', JSON.stringify(settings));
+}
+
+function loadSettings() {
+  const savedSettings = localStorage.getItem('apneaTimerSettings');
+  if (savedSettings) {
+    settings = JSON.stringify(JSON.parse(savedSettings));
+  }
+  updateUI();
+}
+
+function updateUI() {
+  countdownTimeInput.value = settings.countdownTime;
+  audioEnabledCheckbox.checked = settings.audioEnabled;
+  vibrationEnabledCheckbox.checked = settings.vibrationEnabled;
+  currentTimerValue = settings.countdownTime;
+  timerDisplay.textContent = formatTime(currentTimerValue);
+}
+
+function loadHistory() {
+  const savedHistory = localStorage.getItem('apneaTimerHistory');
+  if (savedHistory) {
+    sessionHistory = JSON.parse(savedHistory);
+    displayHistory();
+  }
+}
+
+function saveHistory() {
+  localStorage.setItem('apneaTimerHistory', JSON.stringify(sessionHistory));
+  displayHistory();
+}
+
+function displayHistory() {
+  historyList.innerHTML = '';
+
+  // Show the last 5 sessions
+  const recentSessions = sessionHistory.slice(-5).reverse();
+
+  if (recentSessions.length === 0) {
+    historyList.innerHTML = '<p>No sessions recorded yet</p>';
+    return;
+  }
+
+  recentSessions.forEach((session, index) => {
+    const item = document.createElement('div');
+    item.className = 'history-item';
+    item.innerHTML = `
+      <span>Session #${sessionHistory.length - index}</span>
+      <span>${formatTime(session.duration)}</span>
+      <span>${new Date(session.date).toLocaleDateString()}</span>
+    `;
+    historyList.appendChild(item);
+  });
+}
 
 function handleButtonClick() {
   if (timerState === TimerStates.STOPPED) {
@@ -63,54 +126,138 @@ function handleButtonClick() {
   }
 }
 
-function startCountdown() {
-  startButton.textContent = "Stop";
-  currentTimerValue = countdownTime;
+async function startCountdown() {
+  // Request wake lock to prevent screen from sleeping
+  try {
+    if ('wakeLock' in navigator) {
+      wakeLock = await navigator.wakeLock.request('screen');
+    }
+  } catch (err) {
+    console.log(`Wake Lock error: ${err.name}, ${err.message}`);
+  }
+
+  startButton.textContent = "Cancel";
+  startButton.style.backgroundColor = "#f44336";
+  timerState = TimerStates.COUNTDOWN;
+  currentTimerValue = settings.countdownTime;
+
   // Initialize AudioContext on user interaction
-  if (!audioCtx) {
+  if (settings.audioEnabled && !audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  } else if (audioCtx.state === 'suspended') {
+  } else if (audioCtx && audioCtx.state === 'suspended') {
     audioCtx.resume();
   }
 
-  countdownMessage.textContent = "Countdown started...";
+  countdownMessage.textContent = "Get Ready...";
   timerDisplay.textContent = formatTime(currentTimerValue);
+
+  updateProgressBar(currentTimerValue, settings.countdownTime);
+
   countdownInterval = setInterval(() => {
     currentTimerValue--;
     timerDisplay.textContent = formatTime(currentTimerValue);
+    updateProgressBar(currentTimerValue, settings.countdownTime);
+
     if (currentTimerValue <= 0) {
       clearInterval(countdownInterval);
       countdownMessage.textContent = ""; // Clear countdown message
       startApneaTimer();
     } else if (currentTimerValue <= 5) {
-      playBeep({ duration: 200, frequency: 1000 });
+      if (settings.audioEnabled) playBeep({ duration: 200, frequency: 1000 });
+      if (settings.vibrationEnabled && 'vibrate' in navigator) {
+        navigator.vibrate(200);
+      }
     }
   }, 1000);
 }
 
 function startApneaTimer() {
   startButton.textContent = "Stop";
-  playBeep({ duration: 1000, frequency: 1000 });
+  startButton.style.backgroundColor = "#f44336";
   timerState = TimerStates.RUNNING;
+  startTime = Date.now();
   currentTimerValue = 0; // Start from 0 for stopwatch
   timerDisplay.textContent = formatTime(currentTimerValue);
+
+  if (settings.audioEnabled) playBeep({ duration: 1000, frequency: 1000 });
+  if (settings.vibrationEnabled && 'vibrate' in navigator) {
+    navigator.vibrate([500, 300, 500]);
+  }
+
+  progressBar.style.width = "0%";
+  progressBar.style.backgroundColor = "#3498db";
 
   apneaInterval = setInterval(() => {
     currentTimerValue++;
     timerDisplay.textContent = formatTime(currentTimerValue);
 
-    let elapsedTime = currentTimerValue;
+    // Update progress bar every 10 seconds (different color bands)
+    if (currentTimerValue % 10 === 0) {
+      let percentage = (currentTimerValue % 60) / 60 * 100;
+      progressBar.style.width = `${percentage}%`;
 
-    if (elapsedTime % 60 === 0) {
-      playMultipleBeeps(elapsedTime % 60, { frequency: 700 });
+      // Change color based on time
+      if (currentTimerValue >= 180) { // 3+ minutes - impressive
+        progressBar.style.backgroundColor = "#8e44ad"; // purple
+      } else if (currentTimerValue >= 120) { // 2+ minutes - great
+        progressBar.style.backgroundColor = "#2ecc71"; // green
+      } else if (currentTimerValue >= 60) { // 1+ minute - good
+        progressBar.style.backgroundColor = "#f39c12"; // orange
+      }
+    }
+
+    if (currentTimerValue % 60 === 0 && settings.audioEnabled) { // Every minute
+      playMultipleBeeps(2, { frequency: 700 });
+      if (settings.vibrationEnabled && 'vibrate' in navigator) {
+        navigator.vibrate([300, 200, 300]);
+      }
     }
   }, 1000);
 }
 
+function stopCountdown() {
+  clearInterval(countdownInterval);
+  countdownMessage.textContent = "";
+  resetUI();
+}
+
 function stopApneaTimer() {
-  startButton.textContent = "Restart";
   clearInterval(apneaInterval);
+
+  // Release wake lock
+  if (wakeLock) {
+    wakeLock.release().then(() => {
+      wakeLock = null;
+    });
+  }
+
+  // Save session
+  const duration = currentTimerValue;
+  if (duration > 3) { // Only save sessions longer than 3 seconds
+    const session = {
+      duration: duration,
+      date: Date.now()
+    };
+    sessionHistory.push(session);
+    saveHistory();
+  }
+
+  resetUI();
+}
+
+function resetUI() {
   timerState = TimerStates.STOPPED;
+  startButton.textContent = "Start";
+  startButton.style.backgroundColor = "#4CAF50";
+  currentTimerValue = settings.countdownTime;
+  timerDisplay.textContent = formatTime(currentTimerValue);
+  progressBar.style.width = "0%";
+  progressBar.style.backgroundColor = "#4CAF50";
+}
+
+function updateProgressBar(current, total) {
+  const percentage = (1 - current / total) * 100;
+  progressBar.style.width = `${percentage}%`;
 }
 
 function formatTime(seconds) {
@@ -124,6 +271,8 @@ function pad(num) {
 }
 
 function playBeep(options = {}) {
+  if (!settings.audioEnabled) return;
+
   const {
     duration = 500,
     frequency = 440,
