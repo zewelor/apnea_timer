@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Freediving Apnea Timer</title>
   <style>
     /* Basic styles */
@@ -16,18 +17,85 @@
 
     #timer {
       font-size: 20vw;
-      margin: 10%;
+      margin: 5% 0;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #45a049;
     }
 
     #startButton {
       font-size: 5vw;
-      padding: 4% 8%;
+      padding: 3% 6%;
+      margin-top: 20px;
     }
 
     #countdownMessage {
       font-size: 6vw;
-      margin: 10%;
+      margin: 5%;
       color: yellow;
+    }
+
+    .progress-container {
+      width: 80%;
+      margin: 20px auto;
+      background-color: #444;
+      border-radius: 10px;
+      height: 20px;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0;
+      border-radius: 10px;
+      background-color: #4CAF50;
+      transition: width 0.9s linear;
+    }
+
+    .settings-panel {
+      background-color: #3a3f4b;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 500px;
+    }
+
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 0;
+      align-items: center;
+    }
+
+    .settings-btn {
+      font-size: 1.2rem;
+      padding: 8px 15px;
+      margin: 10px;
+    }
+
+    .history-container {
+      margin-top: 20px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      background-color: #3a3f4b;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 5px;
     }
 
     /* Mobile styles */
@@ -35,16 +103,47 @@
       body {
         margin-top: 10%;
       }
+
+      .setting-row {
+        flex-direction: column;
+        gap: 10px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <h1>Apnea Timer</h1>
+  <div class="progress-container">
+    <div id="progress-bar"></div>
+  </div>
+
   <div id="timer">00:00</div>
   <div id="countdownMessage"></div>
-  <button id="startButton">Prepare</button>
+  <button id="startButton">Start</button>
+
+  <div class="settings-panel">
+    <h2>Settings</h2>
+    <div class="setting-row">
+      <label for="countdownTime">Countdown Time (seconds): </label>
+      <input type="number" id="countdownTime" min="1" max="60" value="10">
+    </div>
+    <div class="setting-row">
+      <label>Audio Feedback:</label>
+      <input type="checkbox" id="audioEnabled" checked>
+    </div>
+    <div class="setting-row">
+      <label>Vibration:</label>
+      <input type="checkbox" id="vibrationEnabled" checked>
+    </div>
+  </div>
+
+  <div class="history-container">
+    <h2>Session History</h2>
+    <div id="history-list">
+      <!-- Session history will be populated here -->
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
