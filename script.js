@@ -16,12 +16,14 @@ const countdownTimeInput = document.getElementById('countdownTime');
 const audioEnabledCheckbox = document.getElementById('audioEnabled');
 const vibrationEnabledCheckbox = document.getElementById('vibrationEnabled');
 const historyList = document.getElementById('history-list');
+const themeSwitch = document.getElementById('themeSwitch');
 
 // Default settings
 let settings = {
   countdownTime: 10,
   audioEnabled: true,
-  vibrationEnabled: true
+  vibrationEnabled: true,
+  darkMode: true
 };
 
 // Timer variables
@@ -42,6 +44,7 @@ startButton.addEventListener('click', handleButtonClick);
 countdownTimeInput.addEventListener('change', updateCountdownTime);
 audioEnabledCheckbox.addEventListener('change', updateAudioSetting);
 vibrationEnabledCheckbox.addEventListener('change', updateVibrationSetting);
+themeSwitch.addEventListener('change', updateTheme);
 
 function updateCountdownTime() {
   settings.countdownTime = parseInt(countdownTimeInput.value) || 10;
@@ -60,6 +63,16 @@ function updateVibrationSetting() {
   saveSettings();
 }
 
+function updateTheme() {
+  settings.darkMode = themeSwitch.checked;
+  applyTheme();
+  saveSettings();
+}
+
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', settings.darkMode ? 'dark' : 'light');
+}
+
 function saveSettings() {
   localStorage.setItem('apneaTimerSettings', JSON.stringify(settings));
 }
@@ -70,12 +83,14 @@ function loadSettings() {
     settings = JSON.stringify(JSON.parse(savedSettings));
   }
   updateUI();
+  applyTheme();
 }
 
 function updateUI() {
   countdownTimeInput.value = settings.countdownTime;
   audioEnabledCheckbox.checked = settings.audioEnabled;
   vibrationEnabledCheckbox.checked = settings.vibrationEnabled;
+  themeSwitch.checked = settings.darkMode;
   currentTimerValue = settings.countdownTime;
   timerDisplay.textContent = formatTime(currentTimerValue);
 }
@@ -151,6 +166,8 @@ async function startCountdown() {
   countdownMessage.textContent = "Get Ready...";
   timerDisplay.textContent = formatTime(currentTimerValue);
 
+  // Make sure progress bar is visible during countdown
+  document.querySelector('.progress-container').style.display = 'block';
   updateProgressBar(currentTimerValue, settings.countdownTime);
 
   countdownInterval = setInterval(() => {
@@ -184,8 +201,8 @@ function startApneaTimer() {
     navigator.vibrate([500, 300, 500]);
   }
 
-  progressBar.style.width = "0%";
-  progressBar.style.backgroundColor = "#3498db";
+  // Hide the progress bar during the apnea timer
+  document.querySelector('.progress-container').style.display = 'none';
 
   apneaInterval = setInterval(() => {
     currentTimerValue++;
@@ -251,6 +268,9 @@ function resetUI() {
   startButton.style.backgroundColor = "#4CAF50";
   currentTimerValue = settings.countdownTime;
   timerDisplay.textContent = formatTime(currentTimerValue);
+  
+  // Show progress bar again but set width to 0
+  document.querySelector('.progress-container').style.display = 'block';
   progressBar.style.width = "0%";
   progressBar.style.backgroundColor = "#4CAF50";
 }
