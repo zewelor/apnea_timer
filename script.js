@@ -78,9 +78,14 @@ function saveSettings() {
 }
 
 function loadSettings() {
-  const savedSettings = localStorage.getItem('apneaTimerSettings');
-  if (savedSettings) {
-    settings = JSON.stringify(JSON.parse(savedSettings));
+  try {
+    const savedSettings = localStorage.getItem('apneaTimerSettings');
+    if (savedSettings) {
+      settings = JSON.parse(savedSettings);
+    }
+  } catch (e) {
+    console.error('Error loading settings:', e);
+    // Use defaults if there's an error
   }
   updateUI();
   applyTheme();
@@ -268,7 +273,7 @@ function resetUI() {
   startButton.style.backgroundColor = "#4CAF50";
   currentTimerValue = settings.countdownTime;
   timerDisplay.textContent = formatTime(currentTimerValue);
-  
+
   // Show progress bar again but set width to 0
   document.querySelector('.progress-container').style.display = 'block';
   progressBar.style.width = "0%";
