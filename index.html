@@ -162,20 +162,20 @@
       padding: 5px;
     }
 
-    .toggle-switch {
+    .setting-switch {
       position: relative;
       display: inline-block;
       width: 60px;
       height: 34px;
     }
 
-    .toggle-switch input {
+    .setting-switch input {
       opacity: 0;
       width: 0;
       height: 0;
     }
 
-    .slider {
+    .setting-switch .slider {
       position: absolute;
       cursor: pointer;
       top: 0;
@@ -187,7 +187,7 @@
       border-radius: 34px;
     }
 
-    .slider:before {
+    .setting-switch .slider:before {
       position: absolute;
       content: "";
       height: 26px;
@@ -297,21 +297,21 @@
       <h2>Settings</h2>
       <div class="setting-row">
         <label for="themeSwitch">Dark Mode:</label>
-        <label class="toggle-switch">
+        <label class="setting-switch">
           <input type="checkbox" id="themeSwitch" checked>
           <span class="slider"></span>
         </label>
       </div>
       <div class="setting-row">
         <label for="audioEnabled">Audio Feedback:</label>
-        <label class="toggle-switch">
+        <label class="setting-switch">
           <input type="checkbox" id="audioEnabled" checked>
           <span class="slider"></span>
         </label>
       </div>
       <div class="setting-row">
         <label for="vibrationEnabled">Vibration:</label>
-        <label class="theme-switch">
+        <label class="setting-switch">
           <input type="checkbox" id="vibrationEnabled" checked>
           <span class="slider"></span>
         </label>

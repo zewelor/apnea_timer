@@ -27,6 +27,11 @@ self.addEventListener('install', event => {
 
 // Fetch event - serve from cache if available
 self.addEventListener('fetch', event => {
+  if (event.request.url.startsWith('chrome-extension:')) {
+    // Skip caching for chrome-extension requests
+    return event.respondWith(fetch(event.request));
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then(response => {
