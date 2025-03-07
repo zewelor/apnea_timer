@@ -2,8 +2,7 @@
 const CACHE_VERSION = 5;
 const CACHE_NAME = 'apnea-timer-v' + CACHE_VERSION;
 const urlsToCache = [
-  './',
-  './index.html',
+  '/apnea_timer/',
   './script.js',
   './manifest.json',
   './icons/icon-192.png',
