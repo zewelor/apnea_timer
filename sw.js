@@ -1,5 +1,5 @@
 // Update this version when making changes to force cache refresh
-const CACHE_VERSION = 5;
+const CACHE_VERSION = 6;
 const CACHE_NAME = 'apnea-timer-v' + CACHE_VERSION;
 const urlsToCache = [
   '/apnea_timer/',
