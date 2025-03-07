@@ -37,41 +37,67 @@
     /* Basic styles */
     body {
       font-family: Arial, sans-serif;
-      text-align: center;
       background-color: var(--bg-color);
       color: var(--text-color);
-      margin-top: 5%;
+      margin: 0;
+      padding: 0;
       transition: background-color 0.3s, color 0.3s;
     }
 
-    #timer {
-      font-size: 20vw;
-      margin: 5% 0;
+    /* Container for main content */
+    .main-container {
+      width: 90%;
+      max-width: 800px;
+      margin: 5% auto;
+      text-align: center;
     }
 
+    /* Timer styling */
+    #timer {
+      font-size: 15vw;
+      margin: 5% 0;
+      font-weight: bold;
+      line-height: 1;
+    }
+
+    /* Button styling */
     button {
       background-color: var(--button-bg);
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: all 0.3s;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      font-weight: bold;
     }
 
     button:hover {
       background-color: var(--button-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    button:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
 
     #startButton {
-      font-size: 5vw;
-      padding: 3% 6%;
-      margin-top: 20px;
+      font-size: 2rem;
+      padding: 15px 40px;
+      margin: 30px auto;
+      display: block;
+      min-width: 200px;
+      border-radius: 50px;
     }
 
     #countdownMessage {
       font-size: 6vw;
       margin: 5%;
-      color: yellow;
+      color: #ffeb3b;
+      font-weight: bold;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     }
 
     .progress-container {
@@ -102,7 +128,7 @@
     .setting-row {
       display: flex;
       justify-content: space-between;
-      margin: 10px 0;
+      margin: 15px 0;
       align-items: center;
     }
 
@@ -134,14 +160,6 @@
       border: 1px solid var(--border-color);
       border-radius: 4px;
       padding: 5px;
-    }
-
-    /* Theme toggle switch */
-    .theme-switch-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin: 15px 0;
     }
 
     .theme-switch {
@@ -192,54 +210,117 @@
     /* Mobile styles */
     @media (max-width: 600px) {
       body {
-        margin-top: 10%;
+        margin-top: 5%;
       }
 
-      .setting-row {
-        flex-direction: column;
-        gap: 10px;
+      #startButton {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+        font-size: 1.5rem;
+        padding: 16px 40px;
+        width: 80%;
+        max-width: 300px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+      }
+
+      .history-container {
+        margin-bottom: 100px;
+        /* Add space for fixed button */
+      }
+    }
+
+    /* Media queries for responsiveness */
+    @media (min-width: 768px) {
+
+      /* For desktops and tablets */
+      body {
+        padding: 20px;
+      }
+
+      #timer {
+        font-size: 15vw;
+        margin: 30px 0;
+      }
+
+      #startButton {
+        font-size: 1.8rem;
+        padding: 15px 50px;
+      }
+
+      .settings-panel,
+      .history-container {
+        margin: 40px auto;
+      }
+    }
+
+    @media (max-width: 767px) {
+
+      /* For mobile devices */
+      .main-container {
+        margin: 5% auto;
+        width: 95%;
+      }
+
+      #timer {
+        font-size: 30vw;
+        margin: 20px 0;
+      }
+
+      .settings-panel,
+      .history-container {
+        width: 95%;
+        padding: 15px;
+        border-radius: 16px;
+      }
+
+      .progress-container {
+        height: 15px;
       }
     }
   </style>
 </head>
 
 <body>
-
-  <div class="progress-container">
-    <div id="progress-bar"></div>
-  </div>
-
-  <div id="timer">00:00</div>
-  <div id="countdownMessage"></div>
-  <button id="startButton">Start</button>
-
-  <div class="settings-panel">
-    <h2>Settings</h2>
-    <div class="theme-switch-container">
-      <label for="themeSwitch">Dark Mode:</label>
-      <label class="theme-switch">
-        <input type="checkbox" id="themeSwitch" checked>
-        <span class="slider"></span>
-      </label>
+  <div class="main-container">
+    <div class="progress-container">
+      <div id="progress-bar"></div>
     </div>
-    <div class="setting-row">
-      <label for="countdownTime">Countdown Time (seconds): </label>
-      <input type="number" id="countdownTime" min="1" max="60" value="10">
-    </div>
-    <div class="setting-row">
-      <label for="audioEnabled">Audio Feedback:</label>
-      <input type="checkbox" id="audioEnabled" checked>
-    </div>
-    <div class="setting-row">
-      <label for="vibrationEnabled">Vibration:</label>
-      <input type="checkbox" id="vibrationEnabled" checked>
-    </div>
-  </div>
 
-  <div class="history-container">
-    <h2>Session History</h2>
-    <div id="history-list">
-      <!-- Session history will be populated here -->
+    <div id="timer">00:00</div>
+    <div id="countdownMessage"></div>
+    <button id="startButton">Start</button>
+
+    <div class="settings-panel">
+      <h2>Settings</h2>
+      <div class="setting-row">
+        <label for="themeSwitch">Dark Mode:</label>
+        <label class="theme-switch">
+          <input type="checkbox" id="themeSwitch" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <label for="countdownTime">Countdown Time (seconds): </label>
+        <input type="number" id="countdownTime" min="1" max="60" value="10">
+      </div>
+      <div class="setting-row">
+        <label for="audioEnabled">Audio Feedback:</label>
+        <input type="checkbox" id="audioEnabled" checked>
+      </div>
+      <div class="setting-row">
+        <label for="vibrationEnabled">Vibration:</label>
+        <input type="checkbox" id="vibrationEnabled" checked>
+      </div>
+    </div>
+
+    <div class="history-container">
+      <h2>Session History</h2>
+      <div id="history-list">
+        <!-- Session history will be populated here -->
+      </div>
     </div>
   </div>
 
