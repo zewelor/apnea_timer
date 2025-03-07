@@ -2,7 +2,7 @@
   "name": "Freediving Apnea Timer",
   "short_name": "Apnea Timer",
   "description": "A timer application for freediving breath-holding practice",
-  "start_url": "./index.html",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#282c34",
   "theme_color": "#2196f3",
