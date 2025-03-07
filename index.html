@@ -162,14 +162,14 @@
       padding: 5px;
     }
 
-    .theme-switch {
+    .toggle-switch {
       position: relative;
       display: inline-block;
       width: 60px;
       height: 34px;
     }
 
-    .theme-switch input {
+    .toggle-switch input {
       opacity: 0;
       width: 0;
       height: 0;
@@ -297,22 +297,28 @@
       <h2>Settings</h2>
       <div class="setting-row">
         <label for="themeSwitch">Dark Mode:</label>
-        <label class="theme-switch">
+        <label class="toggle-switch">
           <input type="checkbox" id="themeSwitch" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <label for="audioEnabled">Audio Feedback:</label>
+        <label class="toggle-switch">
+          <input type="checkbox" id="audioEnabled" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <label for="vibrationEnabled">Vibration:</label>
+        <label class="theme-switch">
+          <input type="checkbox" id="vibrationEnabled" checked>
           <span class="slider"></span>
         </label>
       </div>
       <div class="setting-row">
         <label for="countdownTime">Countdown Time (seconds): </label>
         <input type="number" id="countdownTime" min="1" max="60" value="10">
-      </div>
-      <div class="setting-row">
-        <label for="audioEnabled">Audio Feedback:</label>
-        <input type="checkbox" id="audioEnabled" checked>
-      </div>
-      <div class="setting-row">
-        <label for="vibrationEnabled">Vibration:</label>
-        <input type="checkbox" id="vibrationEnabled" checked>
       </div>
     </div>
 
