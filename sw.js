@@ -1,5 +1,5 @@
 // Update this version when making changes to force cache refresh
-const CACHE_VERSION = 3;
+const CACHE_VERSION = 5;
 const CACHE_NAME = 'apnea-timer-v' + CACHE_VERSION;
 const urlsToCache = [
   './',
@@ -28,58 +28,25 @@ self.addEventListener('install', event => {
 // Fetch event - serve from cache if available
 self.addEventListener('fetch', event => {
   if (event.request.url.startsWith('chrome-extension:')) {
-    // Skip caching for chrome-extension requests
     return event.respondWith(fetch(event.request));
   }
 
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Try network first for HTML files to ensure fresh content
-        if (event.request.url.endsWith('.html') || event.request.url.endsWith('/')) {
-          return fetch(event.request)
-            .then(networkResponse => {
-              // If network fetch successful, update the cache
-              const responseToCache = networkResponse.clone();
-              caches.open(CACHE_NAME)
-                .then(cache => {
-                  cache.put(event.request, responseToCache);
-                });
-              return networkResponse;
-            })
-            .catch(() => {
-              // If network fetch fails, fall back to cache
-              return response || new Response('Network error occurred', {
-                status: 408,
-                headers: { 'Content-Type': 'text/plain' }
-              });
-            });
-        }
-
-        // Return cached response if found
-        if (response) {
-          return response;
-        }
-
-        // If not in cache, fetch from network
-        return fetch(event.request)
-          .then(response => {
-            // Don't cache if not a valid response
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-
-            // Clone the response as it can only be consumed once
-            const responseToCache = response.clone();
-
-            caches.open(CACHE_NAME)
-              .then(cache => {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
+    caches.match(event.request).then(cacheResponse => {
+      const networkFetch = fetch(event.request).then(networkResponse => {
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          const clonedResponse = networkResponse.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, clonedResponse);
           });
-      })
+        }
+        return networkResponse;
+      }).catch(() => {
+        // Fallback to cache if network fails
+        return cacheResponse;
+      });
+      return cacheResponse || networkFetch;
+    })
   );
 });
 

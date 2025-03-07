@@ -2,19 +2,19 @@
   "name": "Freediving Apnea Timer",
   "short_name": "Apnea Timer",
   "description": "A timer application for freediving breath-holding practice",
-  "start_url": "./",
+  "start_url": "/apnea_timer/",
+  "scope": "/apnea_timer/",
   "display": "standalone",
   "background_color": "#282c34",
   "theme_color": "#2196f3",
-  "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "./icons/icon-192.png",
+      "src": "/apnea_timer/icons/icon-192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "./icons/icon-512.png",
+      "src": "/apnea_timer/icons/icon-512.png",
       "type": "image/png",
       "sizes": "512x512"
     }

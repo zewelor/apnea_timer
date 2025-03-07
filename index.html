@@ -6,8 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Freediving Apnea Timer</title>
   <meta name="theme-color" content="#2196f3">
+  <meta name="description" content="A timer application for freediving breath-holding practice">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Apnea Timer">
+  <meta name="apple-mobile-web-app-title" content="Apnea Timer">
+  <meta name="msapplication-starturl" content="/apnea_timer/">
   <link rel="manifest" href="./manifest.json">
-  <link rel="apple-touch-icon" href="./icons/icon-192.png">
   <link rel="icon" type="image/x-icon" href="./favicon.ico">
   <style>
     :root {
@@ -334,46 +339,10 @@
   <script>
     // Register service worker for PWA
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        let refreshing = false;
-
-        // Handle controller change (when a new service worker takes over)
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          if (refreshing) return;
-          refreshing = true;
-          window.location.reload();
-        });
-
-        // Register the service worker
-        navigator.serviceWorker.register('./sw.js', { scope: './' })
-          .then(reg => {
-            console.log('Service worker registered:', reg);
-
-            // Check for updates
-            reg.addEventListener('updatefound', () => {
-              const newWorker = reg.installing;
-
-              newWorker.addEventListener('statechange', () => {
-                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  // New content is available, create notification
-                  if (confirm('New version available! Click OK to update.')) {
-                    newWorker.postMessage({ action: 'skipWaiting' });
-                  }
-                }
-              });
-            });
-
-            // Check if there's an update immediately
-            reg.update();
-
-            // Set up periodic updates
-            setInterval(() => {
-              reg.update();
-              console.log('Checking for service worker updates...');
-            }, 1000 * 60 * 60); // Check every hour
-          })
-          .catch(err => console.log('Service worker registration failed:', err));
-      });
+      navigator.serviceWorker.register(
+        './sw.js',
+        { scope: '/apnea_timer/' }
+      )
     }
   </script>
 </body>
