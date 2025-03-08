@@ -2,12 +2,12 @@
 const CACHE_VERSION = 6;
 const CACHE_NAME = 'apnea-timer-v' + CACHE_VERSION;
 const urlsToCache = [
-  './',
-  './script.js',
-  './favicon.ico',
-  './manifest.json',
-  './icons/icon-192.png',
-  './icons/icon-512.png'
+  '/',
+  '/script.js',
+  '/favicon.ico',
+  '/manifest.json',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png'
 ];
 
 // Install event - cache assets
