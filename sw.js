@@ -1,5 +1,5 @@
 // Update this version when making changes to force cache refresh
-const CACHE_VERSION = 7;
+const CACHE_VERSION = 8;
 const CACHE_NAME = 'apnea-timer-v' + CACHE_VERSION;
 const urlsToCache = [
   '/',
@@ -7,7 +7,8 @@ const urlsToCache = [
   '/favicon.ico',
   '/manifest.json',
   '/icons/icon-192.png',
-  '/icons/icon-512.png'
+  '/icons/icon-512.png',
+  '/icons/maskable-icon.png',
 ];
 
 // Install event - cache assets
